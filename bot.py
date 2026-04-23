@@ -6,8 +6,12 @@ TOKEN = os.getenv("BOT_TOKEN")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.message
-    user = message.from_user
 
+    # ✅ LOOP FIX (bot apne hi message ko ignore karega)
+    if message.from_user.is_bot:
+        return
+
+    user = message.from_user
     name = user.first_name
 
     try:

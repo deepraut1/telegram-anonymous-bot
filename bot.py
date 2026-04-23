@@ -12,10 +12,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     user = message.from_user
-    name = user.first_name
 
     try:
-        # Check if it's a reply
+        # ✅ Check if user is admin/owner
+        member = await context.bot.get_chat_member(message.chat_id, user.id)
+        if member.status in ["administrator", "creator"]:
+            return  # ignore admins
+
+        name = user.first_name
+
+        # Reply support
         reply_id = None
         if message.reply_to_message:
             reply_id = message.reply_to_message.message_id
@@ -23,7 +29,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Delete original message
         await message.delete()
 
-        # Send message with reply support
+        # Re-send message
         if message.text:
             await context.bot.send_message(
                 chat_id=message.chat_id,
